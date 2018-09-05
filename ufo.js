@@ -44,7 +44,7 @@ function fireBlaster() {
 	b.setAttribute("id", "blaster_shot_" + blaster_count); //Set a unique ID
 	b.setAttribute("src", blaster_shot_img); //Add image
 	b.setAttribute("style", "position:absolute;top:" + ufo_currentY + ";left:" + ufo_currentX + ";"); //Set origin position to the position of the UFO when it was fired
-	document.body.appendChild(b); //Add the new elemtnt to the DOM
+	document.body.appendChild(b); //Add the new element to the DOM
 	shot_angle = Math.atan2((mouseY + 15) - ufo_currentY, (mouseX + 15) - ufo_currentX) * 180 / Math.PI; //Figure out the angle of the shot based on where it started and where it is going (mouse position)
 	shots[blaster_count] = [blaster_count,ufo_currentX,ufo_currentY,mouseX + 15,mouseY + 15,0,shot_angle]; //Save all of that info to the shots array
 	blaster_count = (blaster_count + 1) % 15; //Increment the blaster count, resetting after 15 since we won't ever have more than that on the screen at one time
@@ -65,33 +65,32 @@ function moveBlaster() { //Moves each blaster at a certain speed at the angle it
 			shots[shot[0]][2] = move_hereY;
 			shots[shot[0]][5] = shot[5] + 1; //Increment the shot timeout (in case something goes wrong)
 			
-			var d = new Date(); //Grab current date/time to use as a cache buster
-			var n = d.getTime();
 			
-			//There is probably a less redundant way of doing this section...
+			
 			if (((shot_angle + 360) % 360) < 180) { //Make shot angle a positive number and check if it is angled up or down
 				if (shot[2] > shot[4]) { //If angle is up, check if shot X is greater than target X
-					shot_img.parentNode.removeChild(shot_img); //Remove blaster shot image
-					b = document.createElement('img'); //Create new explosion element
-					b.setAttribute("id", "blaster_exp" + n);
-					b.setAttribute("src", blast_img + "?" + n); //Add cache buster so he browser doesn't reuse the same animation. Otherwise, all of the explosion animations will be in sync instead of starting at the point of impact
-					b.setAttribute("style", "position:absolute;top:" + shot[4] + ";left:" + shot[3] + ";"); //Place explosion at the target position
-					document.body.appendChild(b); //Add element to the DOM
-					setTimeout(removeBlast, 1000, n); //Remove the explosion animated after 1 second
+					removeShot(shot, shot_img);
 				}
 			} else {
 				if (shot[2] < shot[4]) { //If angle is down, check if shot X is less than target X
-					shot_img.parentNode.removeChild(shot_img); //Remove blaster shot image
-					b = document.createElement('img'); //Create new explosion element
-					b.setAttribute("id", "blaster_exp" + n);
-					b.setAttribute("src", blast_img + "?" + n); //Add cache buster so he browser doesn't reuse the same animation. Otherwise, all of the explosion animations will be in sync instead of starting at the point of impact
-					b.setAttribute("style", "position:absolute;top:" + shot[4] + ";left:" + shot[3] + ";"); //Place explosion at the target position
-					document.body.appendChild(b); //Add element to the DOM
-					setTimeout(removeBlast, 1000, n); //Remove the explosion animated after 1 second
+					removeShot(shot, shot_img);
 				}
 			}
 		}
 	}
+}
+
+function removeShot(shot, shot_img) {
+	var d = new Date(); //Grab current date/time to use as a cache buster
+	var n = d.getTime();
+	
+	shot_img.parentNode.removeChild(shot_img); //Remove blaster shot image
+	b = document.createElement('img'); //Create new explosion element
+	b.setAttribute("id", "blaster_exp" + n);
+	b.setAttribute("src", blast_img + "?" + n); //Add cache buster so he browser doesn't reuse the same animation. Otherwise, all of the explosion animations will be in sync instead of starting at the point of impact
+	b.setAttribute("style", "position:absolute;top:" + shot[4] + ";left:" + shot[3] + ";"); //Place explosion at the target position
+	document.body.appendChild(b); //Add element to the DOM
+	setTimeout(removeBlast, 1000, n); //Remove the explosion animated after 1 second
 }
 
 function removeBlast(blast_id) {
